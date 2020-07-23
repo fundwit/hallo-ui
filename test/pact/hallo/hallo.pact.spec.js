@@ -146,4 +146,95 @@ describe("hallo-ui and hallo Pact test", () => {
             );
         });
     });
+
+    describe("login", () => {
+        test("login success", async () => {
+            await provider.addInteraction({
+                state: 'success login',
+                uponReceiving: 'login request',
+                withRequest: {
+                    method: 'POST',
+                    path: '/sessions',
+                    body: like({
+                        username: 'Ann',
+                        secret: 'correctSecret'
+                    })
+                },
+                willRespondWith: {
+                    status: 200,
+                },
+            });
+
+            const client = new HalloClient(provider.mockService.baseUrl);
+            const response = await client.login('Ann', 'correctSecret');
+            expect(response.status).toStrictEqual(200);
+        });
+
+        test("login failed", async () => {
+            await provider.addInteraction({
+                state: 'failed login',
+                uponReceiving: 'login request',
+                withRequest: {
+                    method: 'POST',
+                    path: '/sessions',
+                    body: like({
+                        username: 'Ann',
+                        secret: 'badSecret'
+                    })
+                },
+                willRespondWith: {
+                    status: 401,
+                },
+            });
+
+            const client = new HalloClient(provider.mockService.baseUrl);
+            const response = await client.login('Ann', 'badSecret');
+            expect(response.status).toStrictEqual(401);
+        });
+    });
+
+
+    describe("logout", () => {
+        test("logout success", async () => {
+            await provider.addInteraction({
+                state: 'success logout',
+                uponReceiving: 'logout request',
+                withRequest: {
+                    method: 'DELETE',
+                    path: '/sessions',
+                    headers: {
+                        "Authorization": like("Bearer correctToken"),
+                    }
+                },
+                willRespondWith: {
+                    status: 204
+                },
+            });
+
+            const client = new HalloClient(provider.mockService.baseUrl);
+            const response = await client.logout();
+            expect(response.status).toStrictEqual(204);
+        });
+
+        test("logout failed", async () => {
+            await provider.addInteraction({
+                state: 'failed logout',
+                uponReceiving: 'logout request',
+                withRequest: {
+                    method: 'DELETE',
+                    path: '/sessions',
+                    headers: {
+                        "Authorization": like("badToken"),
+                    }
+                },
+                willRespondWith: {
+                    status: 204,
+                },
+            });
+
+            const client = new HalloClient(provider.mockService.baseUrl);
+            const response = await client.logout();
+            expect(response.status).toStrictEqual(204);
+        });
+    });
 });

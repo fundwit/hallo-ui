@@ -32,14 +32,29 @@ export class HalloClient {
         }).then(r => r.data);
     }
 
-    async getProduct(id) {
-        return axios.get(this.withPath("/product/" + id), {
-            headers: {
-                "Authorization": this.generateAuthToken()
-            }
-        })
-            .then(r => r.data);
+
+    async login(username, secret) {
+        return axios.post(this.withPath("/sessions"), {
+            username: username,
+            secret: secret
+        }, {validateStatus: null}).then(r => r, );
     }
+    async logout() {
+        return axios.delete(this.withPath("/sessions"), {
+            headers: {
+                "Authorization": 'xxxx'
+            },
+            validateStatus: null
+        }).then(r => r);
+    }
+
+    // async getProduct(id) {
+    //     return axios.get(this.withPath("/product/" + id), {
+    //         headers: {
+    //             "Authorization": this.generateAuthToken()
+    //         }
+    //     }).then(r => r.data);
+    // }
 }
 
 export default new HalloClient('http://hallo/');
