@@ -32,6 +32,12 @@ export class HalloClient {
         }).then(r => r.data);
     }
 
+    async signUp(username, secret) {
+        return axios.post(this.withPath("/users"), {
+            username: username,
+            secret: secret
+        }, {validateStatus: null}).then(r => r, );
+    }
 
     async login(username, secret) {
         return axios.post(this.withPath("/sessions"), {

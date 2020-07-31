@@ -147,6 +147,52 @@ describe("hallo-ui and hallo Pact test", () => {
         });
     });
 
+    describe("sign up", () => {
+        test("sign up success", async () => {
+            await provider.addInteraction({
+                state: 'success sign up',
+                uponReceiving: 'sign up request',
+                withRequest: {
+                    method: 'POST',
+                    path: '/users',
+                    body: like({
+                        username: 'Ann',
+                        secret: 'correctSecret'
+                    })
+                },
+                willRespondWith: {
+                    status: 200,
+                },
+            });
+
+            const client = new HalloClient(provider.mockService.baseUrl);
+            const response = await client.signUp('Ann', 'correctSecret');
+            expect(response.status).toStrictEqual(200);
+        });
+
+        test("sign up failed", async () => {
+            await provider.addInteraction({
+                state: 'failed sign up',
+                uponReceiving: 'sign up request',
+                withRequest: {
+                    method: 'POST',
+                    path: '/users',
+                    body: like({
+                        username: 'Ann',
+                        secret: 'badSecret'
+                    })
+                },
+                willRespondWith: {
+                    status: 409,
+                },
+            });
+
+            const client = new HalloClient(provider.mockService.baseUrl);
+            const response = await client.signUp('Ann', 'badSecret');
+            expect(response.status).toStrictEqual(409);
+        });
+    });
+
     describe("login", () => {
         test("login success", async () => {
             await provider.addInteraction({
