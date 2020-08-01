@@ -239,6 +239,56 @@ describe("hallo-ui and hallo Pact test", () => {
         });
     });
 
+    describe("session info", () => {
+        test("session info - success", async () => {
+            await provider.addInteraction({
+                state: 'already login for session info',
+                uponReceiving: 'session info request',
+                withRequest: {
+                    method: 'GET',
+                    path: '/sessions/current'
+                },
+                willRespondWith: {
+                    status: 200,
+                    headers: {
+                        'Content-Type': 'application/json; charset=utf-8'
+                    },
+                    body: like({
+                        username: 'Ann'
+                    }),
+                },
+            });
+
+            const client = new HalloClient(provider.mockService.baseUrl);
+            const response = await client.currentSession();
+            expect(response.status).toStrictEqual(200);
+            expect(response.data).toStrictEqual(
+                { username: 'Ann'}
+            );
+        });
+
+        test("session info - failed", async () => {
+            await provider.addInteraction({
+                state: 'un-login for session info',
+                uponReceiving: 'session info request',
+                withRequest: {
+                    method: 'GET',
+                    path: '/sessions/current',
+                    headers: {
+                        "Authorization": like("Bearer correctToken"),
+                    }
+                },
+                willRespondWith: {
+                    status: 401,
+                },
+            });
+
+            const client = new HalloClient(provider.mockService.baseUrl);
+            const response = await client.currentSession();
+            expect(response.status).toStrictEqual(401);
+        });
+    });
+
 
     describe("logout", () => {
         test("logout success", async () => {

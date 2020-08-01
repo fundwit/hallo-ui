@@ -45,6 +45,16 @@ export class HalloClient {
             secret: secret
         }, {validateStatus: null}).then(r => r, );
     }
+
+    async currentSession() {
+        return axios.get(this.withPath("/sessions/current"), {
+            headers: {
+                "Authorization": 'xxxx'
+            },
+            validateStatus: null
+        }).then(r => r,);
+    }
+
     async logout() {
         return axios.delete(this.withPath("/sessions"), {
             headers: {
