@@ -10,8 +10,10 @@
     "posttest:pact": "node publish.pact.js"
   },
   "dependencies": {
+    "element-ui": "^2.9.1",
     "core-js": "^3.6.5",
     "vue": "^2.6.11",
+    "vuex": "^3.5.1",
     "axios": "^0.19.1"
   },
   "devDependencies": {
@@ -27,6 +29,8 @@
     "eslint-plugin-vue": "^6.2.2",
     "jest": "^26.0.1",
     "nock": "^11.7.2",
+    "vue-resource": "^1.5.1",
+    "vue-router": "^3.3.4",
     "vue-template-compiler": "^2.6.11"
   },
   "eslintConfig": {
