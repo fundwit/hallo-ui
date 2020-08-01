@@ -1,0 +1,75 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: hallo-ui
+  namespace: default
+  labels:
+    app: hallo-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hallo-ui
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: hallo-ui
+    spec:
+      containers:
+        - name: hallo-ui
+          image: registry.cn-beijing.aliyuncs.com/fundwit/hallo-ui:sha-498d460
+          imagePullPolicy: IfNotPresent
+          # envFrom:
+          #  - configMapRef:
+          #      name: hallo
+          ports:
+            - containerPort: 80
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+      dnsPolicy: ClusterFirst
+      imagePullSecrets:
+        - name: aliyun-cr
+      restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: hallo-ui
+  name: hallo-ui
+  namespace: default
+spec:
+  ports:
+    - name: http
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app: hallo
+  sessionAffinity: None
+  type: ClusterIP
+
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: hallo-ui
+  namespace: default
+spec:
+  rules:
+    - host: hallo.fundwit.com
+      http:
+        paths:
+          - backend:
+              serviceName: hallo-ui
+              servicePort: 8080
+            path: /

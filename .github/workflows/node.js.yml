@@ -1,0 +1,57 @@
+name: Node.js CI
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v2.1.1
+      with:
+        node-version: 12.x
+
+    - uses: actions/checkout@v2
+
+    - name: Get dependencies
+      run: |
+        npm ci
+
+#    - name: Test
+#      run: |
+#        curl -fL -o pact.tar.gz https://github.com/pact-foundation/pact-ruby-standalone/releases/download/v1.85.0/pact-1.85.0-linux-x86_64.tar.gz
+#        tar xf pact.tar.gz
+#        export PATH=$PATH:`pwd`/pact/bin
+#        export PACT_BROKER_USERNAME=${{secrets.PACT_BROKER_USERNAME}}
+#        export PACT_BROKER_PASSWORD=${{secrets.PACT_BROKER_PASSWORD}}
+#
+#        echo $PATH
+#        ls -lh `pwd`/pact/bin
+#
+#        pact-provider-verifier version
+#
+#
+#        go test -race -coverprofile=coverage.txt -covermode=atomic ./...
+#        bash <(curl -s https://codecov.io/bash)
+
+    - name: Build
+      run: |
+        npm run build --if-present
+        mv dist .docker/
+
+    - name: Build and push Docker images
+      uses: docker/build-push-action@v1.1.0
+      with:
+        username: ${{secrets.ALIYUN_REGISTRY_USERNAME}}
+        password: ${{secrets.ALIYUN_REGISTRY_TOKEN}}
+        registry: registry.cn-beijing.aliyuncs.com
+        repository: fundwit/hallo-ui
+        tag_with_sha: true
+        path: .docker
+        dockerfile: .docker/Dockerfile
+        add_git_labels: true
+        push: true
