@@ -246,7 +246,10 @@ describe("hallo-ui and hallo Pact test", () => {
                 uponReceiving: 'session info request',
                 withRequest: {
                     method: 'GET',
-                    path: '/sessions/current'
+                    path: '/sessions/current',
+                    headers: {
+                        "Authorization": like("Bearer correctToken"),
+                    }
                 },
                 willRespondWith: {
                     status: 200,
@@ -267,15 +270,33 @@ describe("hallo-ui and hallo Pact test", () => {
             );
         });
 
-        test("session info - failed", async () => {
+        test("session info - un-login", async () => {
             await provider.addInteraction({
                 state: 'un-login for session info',
                 uponReceiving: 'session info request',
                 withRequest: {
                     method: 'GET',
                     path: '/sessions/current',
+                },
+                willRespondWith: {
+                    status: 401,
+                },
+            });
+
+            const client = new HalloClient(provider.mockService.baseUrl);
+            const response = await client.currentSession();
+            expect(response.status).toStrictEqual(401);
+        });
+
+        test("session info - bad token", async () => {
+            await provider.addInteraction({
+                state: 'bad token for session info',
+                uponReceiving: 'session info request',
+                withRequest: {
+                    method: 'GET',
+                    path: '/sessions/current',
                     headers: {
-                        "Authorization": like("Bearer correctToken"),
+                        "Authorization": like("Bearer badToken"),
                     }
                 },
                 willRespondWith: {

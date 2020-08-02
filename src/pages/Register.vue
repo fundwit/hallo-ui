@@ -2,7 +2,7 @@
     <div>
         <banner/>
         <div>
-            Register
+            注册暂未开放
         </div>
     </div>
 </template>
