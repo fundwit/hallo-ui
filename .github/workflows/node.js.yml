@@ -61,6 +61,7 @@ jobs:
 
     - name: deploy
       run: |
+        mkdir -p ~/.kube
         cat >> ~/.kube/config <<EOF
         ${{secrets.FUNDWIT_DEPLOY_KUBECONFIG}}
         EOF
