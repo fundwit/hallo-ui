@@ -36,7 +36,7 @@ spec:
               memory: 256Mi
       dnsPolicy: ClusterFirst
       imagePullSecrets:
-        - name: aliyun-cr
+      - name: cr-aliyun
       restartPolicy: Always
 
 ---
@@ -50,11 +50,11 @@ metadata:
 spec:
   ports:
     - name: http
-      port: 8080
+      port: 80
       protocol: TCP
-      targetPort: 8080
+      targetPort: 80
   selector:
-    app: hallo
+    app: hallo-ui
   sessionAffinity: None
   type: ClusterIP
 
@@ -71,5 +71,5 @@ spec:
         paths:
           - backend:
               serviceName: hallo-ui
-              servicePort: 8080
+              servicePort: 80
             path: /

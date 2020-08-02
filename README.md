@@ -1,3 +1,5 @@
+![Node.js CI](https://github.com/fundwit/hallo-ui/workflows/Node.js%20CI/badge.svg)
+
 # hallo-ui
 
 ## Project setup
