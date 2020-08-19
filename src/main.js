@@ -8,10 +8,12 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import router from "@/router";
 
+import VueCookies from 'vue-cookies'
 
 // import locale from 'element-ui/lib/locale/lang/en'
 // Vue.use(ElementUI, {locale})
 Vue.use(ElementUI)
+Vue.use(VueCookies)
 
 // Vue.use(VueResource)
 // Vue.http.interceptors.push((req, next) => {

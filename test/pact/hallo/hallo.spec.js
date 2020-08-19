@@ -1,5 +1,4 @@
-import {email, like} from "@pact-foundation/pact/dsl/matchers";
-import {HalloClient} from "./halloClient";
+import {HalloClient} from "../../../src/halloClient";
 
 describe("halloClient basic test", () => {
     test("test constructor", async () => {

@@ -31,6 +31,8 @@
 <script>
     import Banner from "@/components/Banner"
     import {mapGetters} from "vuex";
+    import halloClient from "@/halloClient";
+
     export default {
         name: 'Login',
         components: {
@@ -53,10 +55,17 @@
         },
         methods: {
             onSubmit() {
-                // 认证
-                let securityContext = {token: '123', principal: { username: this.loginRequest.username}}
-                // 认证成功后，更新 store
-                this.$store.dispatch('updateSecurityContext', securityContext)
+                halloClient.login(this.loginRequest.username, this.loginRequest.secret).then(response => {
+                    let body = response.data
+                    let securityContext = {token: body.token, principal: {username: body.principal.username}}
+                    this.$store.dispatch('updateSecurityContext', securityContext)
+                    this.logining = false;
+                }).catch((error) => {
+                    // 异常： 认证失败 (401)
+                    // 异常： 服务不可用 (其他错误码，请求发送失败)
+                    this.$store.dispatch('updateSecurityContext', null)
+                    console.log(error)
+                });
             }
         }
     }

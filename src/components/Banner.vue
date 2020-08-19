@@ -19,7 +19,7 @@
             </el-menu-item>
 
             <el-submenu index="9" class="float-right" v-if="isLogin">
-                <template slot="title">Me</template>
+                <template slot="title">{{securityContext.principal.username}}</template>
                 <el-menu-item index="2-1">
                     <router-link :to="{name: 'Profile'}" tag="span" class="link-element">
                     Profile

@@ -1,7 +1,7 @@
 import path from "path";
 import {Pact} from "@pact-foundation/pact";
 import {like, email} from "@pact-foundation/pact/dsl/matchers";
-import {HalloClient} from "./halloClient";
+import {HalloClient} from "../../../src/halloClient";
 
 const provider = new Pact({
     consumer: 'hallo-ui',
@@ -208,12 +208,24 @@ describe("hallo-ui and hallo Pact test", () => {
                 },
                 willRespondWith: {
                     status: 200,
+                    headers: {
+                        'Content-Type': 'application/json; charset=utf-8'
+                    },
+                    body: like({
+                        token: 'correctToken',
+                        principal: like({
+                            username: 'Ann'
+                        })
+                    }),
                 },
             });
 
             const client = new HalloClient(provider.mockService.baseUrl);
             const response = await client.login('Ann', 'correctSecret');
             expect(response.status).toStrictEqual(200);
+            expect(response.data).toStrictEqual(
+                { token: 'correctToken', principal: {username: 'Ann'}}
+            );
         });
 
         test("login failed", async () => {
@@ -257,7 +269,10 @@ describe("hallo-ui and hallo Pact test", () => {
                         'Content-Type': 'application/json; charset=utf-8'
                     },
                     body: like({
-                        username: 'Ann'
+                        token: 'correctToken',
+                        principal: like({
+                            username: 'Ann'
+                        })
                     }),
                 },
             });
@@ -266,7 +281,7 @@ describe("hallo-ui and hallo Pact test", () => {
             const response = await client.currentSession();
             expect(response.status).toStrictEqual(200);
             expect(response.data).toStrictEqual(
-                { username: 'Ann'}
+                { token: 'correctToken', principal: {username: 'Ann'}}
             );
         });
 
@@ -284,7 +299,7 @@ describe("hallo-ui and hallo Pact test", () => {
             });
 
             const client = new HalloClient(provider.mockService.baseUrl);
-            const response = await client.currentSession();
+            const response = await client.currentSession(null);
             expect(response.status).toStrictEqual(401);
         });
 
@@ -305,7 +320,7 @@ describe("hallo-ui and hallo Pact test", () => {
             });
 
             const client = new HalloClient(provider.mockService.baseUrl);
-            const response = await client.currentSession();
+            const response = await client.currentSession('badToken');
             expect(response.status).toStrictEqual(401);
         });
     });
@@ -329,7 +344,7 @@ describe("hallo-ui and hallo Pact test", () => {
             });
 
             const client = new HalloClient(provider.mockService.baseUrl);
-            const response = await client.logout();
+            const response = await client.logout('correctToken');
             expect(response.status).toStrictEqual(204);
         });
 
@@ -350,7 +365,7 @@ describe("hallo-ui and hallo Pact test", () => {
             });
 
             const client = new HalloClient(provider.mockService.baseUrl);
-            const response = await client.logout();
+            const response = await client.logout('badToken');
             expect(response.status).toStrictEqual(204);
         });
     });

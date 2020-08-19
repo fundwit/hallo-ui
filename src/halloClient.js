@@ -36,41 +36,33 @@ export class HalloClient {
         return axios.post(this.withPath("/users"), {
             username: username,
             secret: secret
-        }, {validateStatus: null}).then(r => r, );
+        }, {validateStatus: null});
     }
 
     async login(username, secret) {
         return axios.post(this.withPath("/sessions"), {
             username: username,
             secret: secret
-        }, {validateStatus: null}).then(r => r, );
+        }, {validateStatus: null});
     }
 
-    async currentSession() {
+    async currentSession(token) {
         return axios.get(this.withPath("/sessions/current"), {
             headers: {
-                "Authorization": 'xxxx'
+                "Authorization": 'Bearer ' + token
             },
             validateStatus: null
-        }).then(r => r,);
+        });
     }
 
-    async logout() {
+    async logout(token) {
         return axios.delete(this.withPath("/sessions"), {
             headers: {
-                "Authorization": 'xxxx'
+                "Authorization": 'Bearer ' + token
             },
             validateStatus: null
-        }).then(r => r);
+        });
     }
-
-    // async getProduct(id) {
-    //     return axios.get(this.withPath("/product/" + id), {
-    //         headers: {
-    //             "Authorization": this.generateAuthToken()
-    //         }
-    //     }).then(r => r.data);
-    // }
 }
 
-export default new HalloClient('http://hallo/');
+export default new HalloClient('/api');

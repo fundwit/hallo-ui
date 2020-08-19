@@ -4,17 +4,19 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
+    "serveWithMockProvider  ": "runMock && vue-cli-service server",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "test:pact": "jest",
     "posttest:pact": "node publish.pact.js"
   },
   "dependencies": {
-    "element-ui": "^2.9.1",
+    "axios": "^0.19.1",
     "core-js": "^3.6.5",
+    "element-ui": "^2.9.1",
     "vue": "^2.6.11",
-    "vuex": "^3.5.1",
-    "axios": "^0.19.1"
+    "vue-cookies": "^1.7.3",
+    "vuex": "^3.5.1"
   },
   "devDependencies": {
     "@pact-foundation/pact": "^9.6.0",
