@@ -96,4 +96,4 @@ jobs:
         cat >> ~/.kube/config <<EOF
         ${{secrets.FUNDWIT_DEPLOY_KUBECONFIG}}
         EOF
-        kubectl set image deployment/hallo-ui hallo-ui=IMAGE_NAME --record
+        kubectl set image deployment/hallo-ui hallo-ui=${IMAGE_NAME} --record
