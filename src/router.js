@@ -5,6 +5,7 @@ import Home from "@/pages/Home";
 import Profile from "@/pages/Profile"
 import Login from "@/pages/Login"
 import Register from "@/pages/Register"
+import NotFound from "@/components/NotFound";
 
 Vue.use(VueRouter)
 
@@ -26,6 +27,8 @@ const router = new VueRouter({
         },
         {
             path: '/register', name: 'Register', component: Register
+        },{
+            path: '*', component: NotFound
         }
     ]
 })
