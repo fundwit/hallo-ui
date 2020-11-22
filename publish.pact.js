@@ -5,7 +5,7 @@ const pact = require('@pact-foundation/pact-node');
 //     process.exit(0)
 // }
 
-const pactBrokerUrl = process.env.PACT_BROKER_URL || 'http://pact.fundwit.com';
+const pactBrokerUrl = process.env.PACT_BROKER_URL || 'https://pact.fundwit.com';
 const pactBrokerUsername = process.env.PACT_BROKER_USERNAME || 'root';
 const pactBrokerPassword = process.env.PACT_BROKER_PASSWORD || 'ytxP@ssword4pact';
 

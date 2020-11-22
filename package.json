@@ -4,10 +4,11 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "serveWithMockProvider  ": "runMock && vue-cli-service server",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint",
+    "test:unit": "vue-cli-service test:unit",
+    "test:e2e": "vue-cli-service test:e2e",
     "test:pact": "jest",
+    "lint": "vue-cli-service lint",
     "posttest:pact": "node publish.pact.js"
   },
   "dependencies": {
@@ -16,24 +17,42 @@
     "element-ui": "^2.9.1",
     "vue": "^2.6.11",
     "vue-cookies": "^1.7.3",
+    "vue-resource": "^1.5.1",
+    "vue-router": "^3.2.0",
     "vuex": "^3.5.1"
   },
   "devDependencies": {
     "@pact-foundation/pact": "^9.6.0",
     "@pact-foundation/pact-node": "^10.2.4",
     "@pact-foundation/pact-web": "^9.11.0",
-    "@testing-library/jest-dom": "^4.2.4",
-    "@vue/cli-plugin-babel": "~4.4.0",
-    "@vue/cli-plugin-eslint": "~4.4.0",
-    "@vue/cli-service": "~4.4.0",
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-eslint": "~4.5.0",
+    "@vue/cli-plugin-router": "~4.5.0",
+    "@vue/cli-plugin-unit-mocha": "^4.5.9",
+    "@vue/cli-plugin-vuex": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
+    "@vue/eslint-config-standard": "^5.1.2",
+    "@vue/test-utils": "^1.0.3",
     "babel-eslint": "^10.1.0",
+    "chai": "^4.1.2",
+    "chromedriver": "80",
+    "cross-env": "^7.0.2",
     "eslint": "^6.7.2",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.0",
     "eslint-plugin-vue": "^6.2.2",
-    "jest": "^26.0.1",
+    "istanbul-instrumenter-loader": "^3.0.1",
+    "jest": "^26.6.3",
     "nock": "^11.7.2",
-    "vue-resource": "^1.5.1",
+    "nyc": "^15.1.0",
     "vue-router": "^3.3.4",
     "vue-template-compiler": "^2.6.11"
+  },
+  "jest": {
+    "verbose": true,
+    "testMatch": ["<rootDir>/tests/pact/**/*.spec.js"]
   },
   "eslintConfig": {
     "root": true,
@@ -47,7 +66,34 @@
     "parserOptions": {
       "parser": "babel-eslint"
     },
-    "rules": {}
+    "rules": {},
+    "overrides": [
+      {
+        "files": [
+          "**/__tests__/*.{j,t}s?(x)",
+          "**/tests/unit/**/*.spec.{j,t}s?(x)"
+        ],
+        "env": {}
+      },
+      {
+        "files": [
+          "**/__tests__/*.{j,t}s?(x)",
+          "**/tests/unit/**/*.spec.{j,t}s?(x)"
+        ],
+        "env": {
+          "mocha": true
+        }
+      },
+      {
+        "files": [
+          "**/__tests__/*.{j,t}s?(x)",
+          "**/tests/unit/**/*.spec.{j,t}s?(x)"
+        ],
+        "env": {
+          "mocha": true
+        }
+      }
+    ]
   },
   "browserslist": [
     "> 1%",

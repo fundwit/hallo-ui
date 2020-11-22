@@ -1,8 +1,6 @@
 name: Node.js CI
 
-on:
-  push:
-    branches: [ master ]
+on: push
 
 jobs:
   build:
@@ -12,6 +10,8 @@ jobs:
     steps:
     - name: Setup Node.js environment
       uses: actions/setup-node@v2.1.1
+      env:
+        ACTIONS_ALLOW_UNSECURE_COMMANDS: true
       with:
         node-version: 12.x
 
@@ -21,32 +21,23 @@ jobs:
       run: |
         npm ci
 
-#    - name: Test
-#      run: |
-#        curl -fL -o pact.tar.gz https://github.com/pact-foundation/pact-ruby-standalone/releases/download/v1.85.0/pact-1.85.0-linux-x86_64.tar.gz
-#        tar xf pact.tar.gz
-#        export PATH=$PATH:`pwd`/pact/bin
-#        export PACT_BROKER_USERNAME=${{secrets.PACT_BROKER_USERNAME}}
-#        export PACT_BROKER_PASSWORD=${{secrets.PACT_BROKER_PASSWORD}}
-#
-#        echo $PATH
-#        ls -lh `pwd`/pact/bin
-#
-#        pact-provider-verifier version
-#
-#
-#        go test -race -coverprofile=coverage.txt -covermode=atomic ./...
-#        bash <(curl -s https://codecov.io/bash)
+    - name: Test
+      run: |
+        npm run test:unit
+
+        export PACT_BROKER_USERNAME=${{secrets.PACT_BROKER_USERNAME}}
+        export PACT_BROKER_PASSWORD=${{secrets.PACT_BROKER_PASSWORD}}
+        npm run test:pact
 
     - name: Build
       run: |
-        npm run build --if-present
+        npm run build
         mv dist .docker/
 
     - name: Generte Build Info File
       run:  |
         timestamp=$(TZ='Asia/Shanghai' date -d today +"%Y-%m-%dT%H:%M:%S+08:00")
-        echo "::set-env name=BUILD_TIMESTAMP::${timestamp}"
+        echo "BUILD_TIMESTAMP=${timestamp}" >> $GITHUB_ENV
 
         cat >> .docker/dist/buildInfo.json <<EOF
         {
@@ -72,6 +63,8 @@ jobs:
         cat .docker/dist/buildInfo.json
 
     - name: Build and push Docker images
+      env:
+        SHOULD_PUBLISH: ${{ github.event_name == 'push' && github.event.ref == 'refs/heads/master' }}
       run: |
         echo '' >> .docker/Dockerfile
         echo "LABEL build.version="${GITHUB_SHA}" build.timestamp="${BUILD_TIMESTAMP}" build.source.repository="${GITHUB_REPOSITORY}" build.source.ref="${GITHUB_REF}" build.source.reversion="${GITHUB_SHA}"" >> .docker/Dockerfile
@@ -80,20 +73,22 @@ jobs:
         registry=registry.cn-beijing.aliyuncs.com
         imageName="${registry}/fundwit/hallo-ui:${GITHUB_SHA}"
         echo "image name: $imageName"
-        echo "::set-env name=IMAGE_NAME::${imageName}"
+        echo "IMAGE_NAME=${imageName}" >> $GITHUB_ENV
 
         docker build -t $imageName .docker
 
-        docker login -u ${{secrets.ALIYUN_REGISTRY_USERNAME}} -p ${{secrets.ALIYUN_REGISTRY_TOKEN}} $registry
-        docker push $imageName
-
-    - name: Kubernetes toolset installer
-      uses: yokawasa/action-setup-kube-tools@v0.1.0
+        if [ "${SHOULD_PUBLISH}" == 'true' ]; then
+          docker login -u ${{secrets.ALIYUN_REGISTRY_USERNAME}} -p ${{secrets.ALIYUN_REGISTRY_TOKEN}} $registry
+          docker push $imageName
+        fi
 
     - name: deploy
-      run: |
-        mkdir -p ~/.kube
-        cat >> ~/.kube/config <<EOF
-        ${{secrets.FUNDWIT_DEPLOY_KUBECONFIG}}
-        EOF
-        kubectl set image deployment/hallo-ui hallo-ui=${IMAGE_NAME} --record
+      if: ${{ github.event_name == 'push' && github.event.ref == 'refs/heads/master' }}
+      uses: stefanprodan/kube-tools@v1.5.0
+      with:
+        command:  |
+          mkdir -p ~/.kube
+          cat >> ~/.kube/config <<EOF
+          ${{secrets.FUNDWIT_DEPLOY_KUBECONFIG}}
+          EOF
+          kubectl set image deployment/hallo hallo=${IMAGE_NAME} --record

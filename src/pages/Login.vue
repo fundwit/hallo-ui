@@ -5,10 +5,12 @@
         <el-row :gutter="20" :style="{margin: '2em'}">
             <el-col :span="12" :offset="6">
                 <el-card shadow="always">
-
+                    <div slot="header" class="clearfix">
+                        <span>登录</span>
+                    </div>
                     <el-form ref="form" :model="loginRequest" label-width="80px" v-if="!isLogin">
                         <el-form-item label="用户名">
-                            <el-input placeholder="请输入用户名" v-model="loginRequest.username"></el-input>
+                            <el-input placeholder="请输入用户名" v-model="loginRequest.name"></el-input>
                         </el-form-item>
                         <el-form-item label="密码">
                             <el-input placeholder="请输入密码" v-model="loginRequest.secret" show-password></el-input>
@@ -19,7 +21,7 @@
                     </el-form>
 
                     <div v-if="isLogin">
-                        用户 {{securityContext.principal.username}} 已登录
+                        用户 {{securityContext.principal.name}} 已登录
                     </div>
 
                 </el-card>
@@ -41,7 +43,7 @@
         data() {
             return {
                 loginRequest: {
-                    username: '',
+                    name: '',
                     secret: '',
                 }
             }
@@ -55,9 +57,9 @@
         },
         methods: {
             onSubmit() {
-                halloClient.login(this.loginRequest.username, this.loginRequest.secret).then(response => {
+                halloClient.login(this.loginRequest.name, this.loginRequest.secret).then(response => {
                     let body = response.data
-                    let securityContext = {token: body.token, principal: {username: body.principal.username}}
+                    let securityContext = {token: body.token, principal: {name: body.principal.name}}
                     this.$store.dispatch('updateSecurityContext', securityContext)
                     this.logining = false;
                 }).catch((error) => {
