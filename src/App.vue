@@ -33,7 +33,7 @@
           // fetch security context
           halloClient.currentSession(this.$cookies.get("token")).then(response => {
             let body = response.data
-            let securityContext = {token: body.token, principal: {username: body.principal.username}}
+            let securityContext = {token: body.token, principal: {name: body.principal.name}}
             this.$store.dispatch('updateSecurityContext', securityContext)
             this.loading = false;
           }).catch((error) => {

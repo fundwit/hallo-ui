@@ -4,10 +4,12 @@
         <el-row :gutter="20" :style="{margin: '2em'}">
             <el-col :span="12" :offset="6">
                 <el-card shadow="always">
-
+                    <div slot="header" class="clearfix">
+                        <span>注册</span>
+                    </div>
                     <el-form ref="form" :model="registerRequest" label-width="80px" v-if="!registerSuccess">
                         <el-form-item label="用户名">
-                            <el-input placeholder="请输入用户名" v-model="registerRequest.username"></el-input>
+                            <el-input placeholder="请输入用户名" v-model="registerRequest.name"></el-input>
                         </el-form-item>
                         <el-form-item label="密码">
                             <el-input placeholder="请输入密码" v-model="registerRequest.secret" show-password></el-input>
@@ -21,7 +23,7 @@
                     </el-form>
 
                     <div v-if="registerSuccess">
-                        用户 {{registerRequest.username}} 已注册成功，请登录
+                        用户 {{registerRequest.name}} 已注册成功，请登录
                     </div>
 
                 </el-card>
@@ -43,7 +45,7 @@
             return {
                 registerSuccess: false,
                 registerRequest: {
-                    username: '',
+                    name: '',
                     secret: '',
                     secretConfirm: '',
                 }
@@ -64,7 +66,7 @@
                 }
 
                 // eslint-disable-next-line no-unused-vars
-                halloClient.signUp(this.registerRequest.username, this.registerRequest.secret).then(response => {
+                halloClient.signUp(this.registerRequest.name, this.registerRequest.secret).then(response => {
                     this.registerSuccess = true
                 }).catch((error) => {
                     console.log(error)

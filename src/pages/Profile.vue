@@ -3,7 +3,7 @@
         <banner/>
         <div>
             <div v-if="isLogin">
-                用户 {{securityContext.principal.username}}
+                用户 {{securityContext.principal.name}}
             </div>
             <div v-if="!isLogin">
                 请先登录

@@ -6,12 +6,11 @@
                     Home
                 </router-link>
             </el-menu-item>
-
-            <el-menu-item index="7" class="float-right" v-if="!isLogin">
-                <router-link :to="{name: 'Register'}" tag="span" class="link-element">
-                    Sign Up
-                </router-link>
-            </el-menu-item>
+<!--            <el-menu-item index="7" class="float-right" v-if="!isLogin">-->
+<!--                <router-link :to="{name: 'Register'}" tag="span" class="link-element">-->
+<!--                    Sign Up-->
+<!--                </router-link>-->
+<!--            </el-menu-item>-->
             <el-menu-item index="8" class="float-right" v-if="!isLogin">
                 <router-link :to="{name: 'Login'}" tag="span" class="link-element">
                     Sign In
@@ -19,7 +18,7 @@
             </el-menu-item>
 
             <el-submenu index="9" class="float-right" v-if="isLogin">
-                <template slot="title">{{securityContext.principal.username}}</template>
+                <template slot="title">{{securityContext.principal.name}}</template>
                 <el-menu-item index="2-1">
                     <router-link :to="{name: 'Profile'}" tag="span" class="link-element">
                     Profile

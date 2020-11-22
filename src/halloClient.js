@@ -6,8 +6,12 @@ axios.defaults.adapter = adapter;
 export class HalloClient {
     constructor(url) {
         if (url === undefined || url === "") {
-            url = process.env.REACT_APP_API_BASE_URL;
+            url = process.env.API_BASE_URL;
         }
+        if (url === undefined) {
+            url = ""
+        }
+
         if (url.endsWith("/")) {
             url = url.substr(0, url.length - 1)
         }
@@ -26,28 +30,30 @@ export class HalloClient {
             email: email
         }).then(r => r.data);
     }
-    async queryUsernameOccupied(username) {
-        return axios.post(this.withPath("/registry/usernames"), {
-            username: username
+    async queryNameOccupied(name) {
+        return axios.post(this.withPath("/registry/names"), {
+            name: name
         }).then(r => r.data);
     }
 
-    async signUp(username, secret) {
-        return axios.post(this.withPath("/users"), {
-            username: username,
+    async signUp(name, email, registerToken, secret) {
+        return axios.post(this.withPath("/accounts"), {
+            name: name,
+            email: email,
+            register_token: registerToken,
             secret: secret
         }, {validateStatus: null});
     }
 
-    async login(username, secret) {
+    async login(name, secret) {
         return axios.post(this.withPath("/sessions"), {
-            username: username,
+            name: name,
             secret: secret
         }, {validateStatus: null});
     }
 
     async currentSession(token) {
-        return axios.get(this.withPath("/sessions/current"), {
+        return axios.get(this.withPath("/sessions/me"), {
             headers: {
                 "Authorization": 'Bearer ' + token
             },
@@ -65,4 +71,4 @@ export class HalloClient {
     }
 }
 
-export default new HalloClient('/api');
+export default new HalloClient('/api/');
