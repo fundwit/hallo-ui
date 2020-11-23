@@ -15,6 +15,7 @@
     "axios": "^0.19.1",
     "core-js": "^3.6.5",
     "element-ui": "^2.9.1",
+    "url-parse": "^1.4.7",
     "vue": "^2.6.11",
     "vue-cookies": "^1.7.3",
     "vue-resource": "^1.5.1",
@@ -52,7 +53,9 @@
   },
   "jest": {
     "verbose": true,
-    "testMatch": ["<rootDir>/tests/pact/**/*.spec.js"]
+    "testMatch": [
+      "<rootDir>/tests/pact/**/*.spec.js"
+    ]
   },
   "eslintConfig": {
     "root": true,

@@ -32,6 +32,7 @@
 
 <script>
     import {mapGetters} from 'vuex'
+    import halloClient from "@/halloClient";
     export default {
         name: 'Banner',
         data () {
@@ -51,7 +52,21 @@
             logout () {
                 this.$confirm('确认登出？')
                     .then(() => {
-                        this.$store.dispatch('updateSecurityContext', null)
+                        const loading = this.$loading({
+                            lock: true,
+                            text: 'Logout...',
+                            spinner: 'el-icon-loading',
+                            // background: 'rgba(0, 0, 0, 0.7)'
+                        });
+                        halloClient.logout(this.securityContext.token).then(response => {
+                            console.log(`logout response status: ${response.status}`)
+                        }).catch((error) => {
+                            // exception: failed to logout
+                            console.log(error)
+                        }).finally(()=>{
+                            loading.close()
+                            this.$store.dispatch('updateSecurityContext', null)
+                        });
                     })
                     .catch(() => {
                         // canceled
