@@ -12,7 +12,7 @@
     "posttest:pact": "node publish.pact.js"
   },
   "dependencies": {
-    "axios": "^0.19.1",
+    "axios": "^0.21.1",
     "core-js": "^3.6.5",
     "element-ui": "^2.9.1",
     "url-parse": "^1.4.7",
